@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Website made by Seth Zyair -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Report Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-white">
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Fire Report Form</h2>
+
+    <!-- Form for Report Generation -->
+    <form id="reportForm" class="bg-white p-4 rounded shadow-sm">
+        <h4 class="mb-3">Report Details</h4>
+
+        <!-- Date of Fire Call -->
+        <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" class="form-control" id="dateofcall">
+        </div>
+
+        <!-- Time selection box -->
+        <div class="mb-3">
+            <label for="time" class="form-label">Time</label>
+            <input type="time" class="form-control" id="time" name="time">
+        </div>
+
+        <!-- Location -->
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" placeholder="[Postal of Fire Call]" required>
+        </div>
+
+        <!-- Reporting Firefighter(s) -->
+        <div class="mb-3">
+            <label for="reportingunits" class="form-label">Reporting Firefighter(s)</label>
+            <input type="text" class="form-control" id="reportingunits" placeholder="[Your Name and Any Other Units]" required>
+        </div>
+
+        <!-- Incident Summary -->
+        <div class="mb-3">
+            <label for="incidentsummary" class="form-label">Incident Summary</label>
+            <textarea class="form-control" id="incidentsummary" rows="3" placeholder="[Provide a detailed account of the actions taken, including the apparatuses utilized, equipment used, and strategies employed to contain the fire.]"></textarea>
+        </div>
+
+        <!-- Actions Taken -->
+        <div class="mb-3">
+            <label for="actionstaken" class="form-label">Actions Taken</label>
+            <textarea class="form-control" id="actionstaken" rows="3" placeholder="[Information about the steps, measures, or interventions that were implemented in response to a particular situation or problem.]"></textarea>
+        </div>
+
+        <!-- Casualties -->
+        <div class="mb-3">
+            <label for="casualties" class="form-label">Casualties</label>
+            <textarea class="form-control" id="casualties" rows="3" placeholder="[Who was killed, injured, or otherwise harmed as a result of an event such as a natural disaster, accident, conflict, or other emergency situation If no casualties put no casualties at this call or leave blank]"></textarea>
+        </div>
+
+        <!-- Cause of Fire -->
+        <div class="mb-3">
+            <label for="causeoffire" class="form-label">Cause of Fire</label>
+            <textarea class="form-control" id="causeoffire" rows="3" placeholder="[The specific factor or event that led to the ignition and subsequent spread of a fire.]"></textarea>
+        </div>
+
+        <!-- Submitted by -->
+        <div class="mb-3">
+            <label for="submittedBy" class="form-label">Submitted by</label>
+            <input type="text" class="form-control" id="submittedBy" placeholder="[Enter your name]">
+        </div>
+
+        <!--Name + Position-->
+
+        <div class="mb-3">
+            <label for="position" class="form-label">Position</label>
+            <input type="text" class="form-control" id="position" placeholder="[Enter your position Ex: FD-123 | A-EMT]">
+        </div>
+
+        <!-- Date -->
+        <div class="mb-3">
+            <label for="date" class="form-label">Date of Submission</label>
+            <input type="date" class="form-control" id="date">
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="generateReport()">Create Report</button>
+        <button type="button" class="btn btn-warning" id="updateBtn" onclick="updateReport()" style="display: none;">Update Report</button>
+    </form>
+
+    <!-- Display Past Reports -->
+    <h4 class="mt-5">Past Reports</h4>
+    <ul id="pastReports" class="list-group mb-3"></ul>
+
+    <!-- Download All Reports -->
+    <button class="btn btn-success" onclick="downloadAllReports()">Download All Reports as .txt</button>
+</div>
+
+<script>
+    let reports = [];
+    let editIndex = -1;
+
+    // Function to generate a report
+    function generateReport() {
+        const report = gatherFormData();
+        reports.push(report);
+        displayPastReports();
+        clearForm();
+    }
+
+    // Function to delete a report
+        function deleteReport(index) {
+        reports.splice(index, 1);
+        displayPastReports();
+    }
+
+    // Function to gather form data into a report object
+    function gatherFormData() {
+        return {
+            dateofcall: document.getElementById('dateofcall').value,
+            time: document.getElementById('time').value,
+            location: document.getElementById('location').value,
+            reportingunits: document.getElementById('reportingunits').value,
+            incidentsummary: document.getElementById('incidentsummary').value,
+            actionstaken: document.getElementById('actionstaken').value,
+            casualties: document.getElementById('casualties').value,
+            causeoffire: document.getElementById('causeoffire').value,
+            submittedBy: document.getElementById('submittedBy').value,
+            position: document.getElementById('position').value,
+            date: document.getElementById('date').value,
+        };
+    }
+
+    // Function to display past reports
+    function displayPastReports() {
+        const pastReportsList = document.getElementById('pastReports');
+        pastReportsList.innerHTML = '';
+        reports.forEach((report, index) => {
+            const reportItem = document.createElement('li');
+            reportItem.classList.add('list-group-item');
+            reportItem.innerHTML = `
+                <strong>Fire Report #${index + 1}</strong><br>
+                <br>
+                Date: ${report.dateofcall}<br>
+                Time: ${report.time}<br>
+                Location: ${report.location}<br>
+                Repoting Firefighter/Firefighters: ${report.reportingunits}<br>
+                <br>
+                Incident Summary: ${report.incidentsummary}<br>
+                <br>
+                Actions Taken: ${report.actionstaken}<br>
+                <br>
+                Casualties: ${report.casualties}<br>
+                <br>
+                Cause of Fire: ${report.causeoffire}<br>
+                <br>
+                Submitted by: ${report.submittedBy}<br>
+                Position: ${report.position}<br>
+                Date of Submission: ${report.date}<br>
+                <button class="btn btn-sm btn-warning mt-2" onclick="editReport(${index})">Edit</button>
+                <button class="btn btn-danger btn-sm mt-2" onclick="deleteReport(${index})">Delete</button>
+                `;
+            pastReportsList.appendChild(reportItem);
+        });
+    }
+
+    // Function to edit a report
+    function editReport(index) {
+        editIndex = index;
+        const report = reports[index];
+        document.getElementById('Date').value = report.dateofcall;
+        document.getElementById('Time').value = report.time;
+        document.getElementById('Location').value = report.location;
+        document.getElementById('Reporting Firefighter/Firefighters').value = report.reportingunits;
+        document.getElementById('Incident Summary').value = report.incidentsummary;
+        document.getElementById('Actions Taken').value = report.actionstaken;
+        document.getElementById('Casualties').value = report.casualties;
+        document.getElementById('Cause of Fire').value = report.causeoffire;
+        document.getElementById('Submitted by').value = report.submittedBy;
+        document.getElementById('Position').value = report.position;
+        document.getElementById('Date of Submission').value = report.date;
+
+        // Show update button
+        document.getElementById('updateBtn').style.display = 'inline-block';
+    }
+
+    // Function to update a report
+    function updateReport() {
+        const updatedReport = gatherFormData();
+        reports[editIndex] = updatedReport;
+        displayPastReports();
+        clearForm();
+        document.getElementById('updateBtn').style.display = 'none';
+        editIndex = -1;
+    }
+
+    // Function to clear the form after generating/updating a report
+    function clearForm() {
+        document.getElementById('reportForm').reset();
+    }
+
+    // Function to download all reports as a .txt file
+    function downloadAllReports() {
+        let text = '';
+        reports.forEach((report, index) => {
+            text += `Fire Report #${index + 1}\n`;
+            text += `Date: ${report.dateofcall}\n`;
+            text += `Time: ${report.time}\n`;
+            text += `Location: ${report.location}\n`;
+            text += `Reporting Firefighter/Firefighters: ${report.reportingunits}\n\n`;
+            text += `Incident Summary: ${report.incidentsummary}\n\n`;
+            text += `Actions Taken: ${report.actionstaken}\n\n`;
+            text += `Causualties: ${report.casualties}\n\n`;
+            text += `Cause of Fire: ${report.causeoffire}\n\n`;
+            text += `Submitted by: ${report.submittedBy}\n`;
+            text += `Position: ${report.position}\n`;
+            text += `Date: ${report.date}\n`;
+        });
+
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'medical_reports.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+</script>
+
+</body>
+</html>
